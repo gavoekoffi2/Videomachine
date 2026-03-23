@@ -1,7 +1,27 @@
+# MoneyPrinterV2 original dependencies
+wheel
+termcolor
+schedule
+kittentts @ https://github.com/KittenML/KittenTTS/releases/download/0.8.1/kittentts-0.8.1-py3-none-any.whl
+soundfile
+prettytable
+webdriver_manager
+selenium_firefox
+selenium
+ollama
+moviepy
+Pillow>=10.0.0
+yagmail
+assemblyai
+faster-whisper
+srt_equalizer
+undetected_chromedriver
+platformdirs
+
+# SaaS API layer
 fastapi==0.111.0
 uvicorn[standard]==0.29.0
 sqlalchemy==2.0.30
-alembic==1.13.1
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 python-multipart==0.0.9
@@ -9,21 +29,6 @@ httpx==0.27.0
 python-dotenv==1.0.1
 pydantic[email]==2.7.1
 pydantic-settings==2.2.1
-celery==5.4.0
-redis==5.0.4
-pillow==10.3.0
-moviepy==1.0.3
-gTTS==2.5.1
-edge-tts==6.1.12
-openai==1.30.1
-anthropic==0.28.0
-requests==2.31.0
-boto3==1.34.0
 aiofiles==23.2.1
-pytest==8.2.0
-pytest-asyncio==0.23.7
-psycopg2-binary==2.9.9
+requests==2.31.0
 aiosqlite==0.20.0
-yt-dlp==2024.5.27
-imageio[ffmpeg]==2.34.1
-numpy==1.26.4

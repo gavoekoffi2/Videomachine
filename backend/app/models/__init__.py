@@ -1,4 +1,3 @@
 from .user import User
-from .video import Video
+from .task import Task
 from .payment import Payment
-from .subscription import Subscription

@@ -8,17 +8,12 @@ services:
     env_file: backend/.env
     volumes:
       - uploads_data:/app/uploads
-      - ./backend/.env:/app/.env:ro
+      - songs_data:/app/Songs
+      - mp_cache:/app/.mp
+      - ./backend/config.json:/app/config.json
     ports:
       - "8000:8000"
-    depends_on:
-      - redis
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
   frontend:
     build:
@@ -26,17 +21,11 @@ services:
       dockerfile: docker/Dockerfile.frontend
     ports:
       - "80:80"
-      - "443:443"
     depends_on:
       - backend
     restart: unless-stopped
 
-  redis:
-    image: redis:7-alpine
-    restart: unless-stopped
-    volumes:
-      - redis_data:/data
-
 volumes:
   uploads_data:
-  redis_data:
+  songs_data:
+  mp_cache:

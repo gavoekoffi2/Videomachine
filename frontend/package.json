@@ -1,12 +1,11 @@
 {
   "name": "videomachine-frontend",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -18,8 +17,7 @@
     "framer-motion": "^11.2.10",
     "react-hot-toast": "^2.4.1",
     "lucide-react": "^0.390.0",
-    "clsx": "^2.1.1",
-    "tailwind-merge": "^2.3.0"
+    "clsx": "^2.1.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

@@ -6,28 +6,17 @@ import { Toaster } from 'react-hot-toast'
 import App from './App'
 import './styles/globals.css'
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: { staleTime: 60_000, retry: 1 },
-  },
-})
+const qc = new QueryClient({ defaultOptions: { queries: { staleTime: 30_000, retry: 1 } } })
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={qc}>
       <BrowserRouter>
         <App />
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            style: {
-              background: '#1e1b4b',
-              color: '#fff',
-              border: '1px solid rgba(79, 91, 255, 0.3)',
-            },
-          }}
-        />
+        <Toaster position="top-right" toastOptions={{
+          style: { background: '#1a1a3e', color: '#fff', border: '1px solid rgba(79,91,255,.3)' }
+        }} />
       </BrowserRouter>
     </QueryClientProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 )

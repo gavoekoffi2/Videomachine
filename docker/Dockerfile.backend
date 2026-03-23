@@ -2,32 +2,47 @@ FROM python:3.11-slim
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    ffmpeg \
-    libgl1-mesa-glx \
-    libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender-dev \
+    firefox-esr \
     wget \
     curl \
+    ffmpeg \
+    git \
+    gcc \
+    g++ \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# Install geckodriver for Selenium
+RUN wget -q "https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz" \
+    -O /tmp/geckodriver.tar.gz \
+    && tar -xzf /tmp/geckodriver.tar.gz -C /usr/local/bin/ \
+    && chmod +x /usr/local/bin/geckodriver \
+    && rm /tmp/geckodriver.tar.gz
 
 WORKDIR /app
 
 # Copy requirements first for layer caching
 COPY backend/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
 
-# Copy application
-COPY backend/ .
+# Copy MoneyPrinterV2 source
+COPY backend/src/ ./src/
+COPY backend/fonts/ ./fonts/
+COPY backend/config.example.json ./config.example.json
 
-# Create upload directories
-RUN mkdir -p uploads/videos uploads/audio uploads/images uploads/temp
+# Copy FastAPI app
+COPY backend/app/ ./app/
+COPY backend/main_api.py .
 
-# Create non-root user
-RUN useradd -m -u 1000 videomachine && chown -R videomachine:videomachine /app
-USER videomachine
+# Create necessary directories
+RUN mkdir -p uploads Songs .mp
+
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
 
 EXPOSE 8000
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+CMD ["uvicorn", "main_api:app", "--host", "0.0.0.0", "--port", "8000"]

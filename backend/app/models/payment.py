@@ -13,11 +13,9 @@ class Payment(Base):
     fedapay_id = Column(String(255))
     amount = Column(Float, nullable=False)
     currency = Column(String(10), default="XOF")
-    status = Column(String(50), default="pending")  # pending, completed, failed, refunded
-    payment_method = Column(String(100))  # mobile_money, card, etc.
+    status = Column(String(50), default="pending")
     plan = Column(String(50))
     description = Column(Text)
-    metadata = Column(JSON)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     completed_at = Column(DateTime(timezone=True))
 

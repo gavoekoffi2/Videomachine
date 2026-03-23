@@ -1,69 +1,98 @@
-# VideoMachine 🎬
+# VideoMachine SaaS
 
-**Plateforme SaaS de génération automatique de vidéos par IA**
+A full SaaS platform for automated video and content generation, built on top of [MoneyPrinterV2](https://github.com/FujiwaraChoki/MoneyPrinterV2).
 
-Transformez n'importe quel sujet en vidéo virale (YouTube Shorts, TikTok, Reels) en moins de 2 minutes.
+## Features
 
-## Stack Technique
+- **YouTube Shorts** — AI-generated scripts, images, voiceover, subtitles, auto-upload
+- **Twitter Bot** — AI-generated posts via Ollama, auto-publish via Selenium
+- **Affiliate Marketing (AFM)** — Scrape product info, generate pitch, share on Twitter
+- **Email Outreach** — Automated outreach campaigns
+- **FedaPay Payments** — Mobile Money, Orange Money, Wave (African market)
+- **Freemium** — Free (3 videos), Starter (20/mo), Pro (100/mo), Enterprise (∞)
 
-- **Backend**: Python FastAPI + SQLAlchemy + SQLite/PostgreSQL
-- **Frontend**: React 18 + TypeScript + Tailwind CSS + Framer Motion
-- **IA**: Claude AI / GPT-4 pour les scripts
-- **TTS**: Edge-TTS (50+ voix naturelles)
-- **Video**: FFmpeg + Pillow
-- **Paiement**: FedaPay (Mobile Money, Orange Money, Wave)
-- **Déploiement**: Docker + VPS
+## Stack
 
-## Démarrage Rapide
+| Layer | Tech |
+|-------|------|
+| Engine | MoneyPrinterV2 (Ollama, KittenTTS, MoviePy, Selenium) |
+| API | FastAPI + SQLAlchemy + SQLite |
+| Auth | JWT |
+| Payments | FedaPay |
+| Frontend | React 18 + TypeScript + Tailwind + Framer Motion |
+| Deploy | Docker + nginx |
 
-```bash
-# Installation
-bash scripts/setup.sh
+## Quick Start
 
-# Backend (port 8000)
-cd backend && source venv/bin/activate
-uvicorn main:app --reload
-
-# Frontend (port 3000)
-cd frontend && npm run dev
-```
-
-## Configuration (backend/.env)
-
-```env
-ANTHROPIC_API_KEY=your-key      # Pour génération scripts (Claude)
-PEXELS_API_KEY=your-key         # Pour images HD
-FEDAPAY_SECRET_KEY=your-key     # Pour paiements
-```
-
-## Déploiement VPS
+### 1. Clone and configure
 
 ```bash
-# Avec Docker
-docker-compose up -d
+git clone <repo-url>
+cd Videomachine
 
-# Script déploiement
-bash scripts/deploy.sh
+# Backend env
+cp backend/.env.example backend/.env
+# Edit backend/.env — set SECRET_KEY, FEDAPAY keys if available
+
+# MoneyPrinterV2 config
+cp backend/config.example.json backend/config.json
+# Edit backend/config.json — set Ollama server, Gemini key, etc.
 ```
 
-## Plans & Tarifs
+### 2. Run with Docker
 
-| Plan | Prix | Vidéos/mois |
-|------|------|-------------|
-| Gratuit | 0 FCFA | 3 |
-| Starter | 5,000 FCFA | 20 |
-| Pro | 12,000 FCFA | 100 |
-| Enterprise | 30,000 FCFA | Illimité |
+```bash
+docker-compose up --build
+```
 
-## Fonctionnalités
+- Frontend: http://localhost
+- Backend API: http://localhost:8000
+- API Docs: http://localhost:8000/docs
 
-- ✅ Génération script par IA (Claude/GPT-4)
-- ✅ Voix off naturelle (50+ voix Edge-TTS)
-- ✅ Images auto via Pexels
-- ✅ Montage vidéo automatique (FFmpeg)
-- ✅ Formats: Portrait (Shorts), Paysage (YouTube), Carré (Instagram)
-- ✅ Paiement FedaPay (Mobile Money Afrique)
-- ✅ Authentification JWT
-- ✅ Dashboard utilisateur
-- ✅ Historique & téléchargement vidéos
-- ✅ Docker + VPS ready
+### 3. First use
+
+1. Register an account at http://localhost/register
+2. Go to **Settings** → configure your Ollama server and Gemini API key
+3. Go to **YouTube** → enter a niche and generate your first video!
+
+## Requirements (non-Docker)
+
+- Python 3.11+
+- Node.js 20+
+- Firefox + geckodriver (for Selenium upload)
+- Ollama running locally or on a server
+- FFmpeg
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `SECRET_KEY` | JWT secret key (change in production!) |
+| `DATABASE_URL` | SQLite (default) or PostgreSQL URL |
+| `ALLOWED_ORIGINS` | CORS origins, comma-separated |
+| `FEDAPAY_SECRET_KEY` | FedaPay secret key (optional, demo mode if absent) |
+| `FEDAPAY_PUBLIC_KEY` | FedaPay public key |
+| `FEDAPAY_ENV` | `sandbox` or `live` |
+
+## MoneyPrinterV2 Config
+
+Configure via the **Settings** page in the dashboard. The config is stored per-user in the database and written to `config.json` before each task. Key settings:
+
+- **Ollama** — URL and model name
+- **NanaBanana2/Gemini** — API key for image generation
+- **TTS Voice** — Voice ID for KittenTTS
+- **Firefox Profile** — Path to Firefox profile for YouTube/Twitter auth
+- **Subtitles** — Provider (faster-whisper or AssemblyAI)
+
+## Plans
+
+| Plan | Videos/month | Price |
+|------|-------------|-------|
+| Free | 3 | 0 FCFA |
+| Starter | 20 | 5,000 FCFA |
+| Pro | 100 | 15,000 FCFA |
+| Enterprise | Unlimited | 40,000 FCFA |
+
+## License
+
+Based on [MoneyPrinterV2](https://github.com/FujiwaraChoki/MoneyPrinterV2) — see original license.

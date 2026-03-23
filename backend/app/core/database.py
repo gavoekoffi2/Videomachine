@@ -7,7 +7,6 @@ engine = create_engine(
     settings.DATABASE_URL,
     connect_args={"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {},
 )
-
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -21,5 +20,5 @@ def get_db():
 
 
 def init_db():
-    from app.models import user, video, payment, subscription  # noqa
+    from app.models import user, task, payment  # noqa
     Base.metadata.create_all(bind=engine)
