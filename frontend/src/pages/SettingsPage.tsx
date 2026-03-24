@@ -173,15 +173,16 @@ export default function SettingsPage() {
         </Section>
 
         <Section title="TikTok" icon={Music2} color="from-pink-500 to-red-500">
-          <Field label="Access Token TikTok" hint="Obtenez-le via TikTok for Developers → votre app → scope video.publish">
-            <input type="password" value={cfg.tiktok_access_token || ''} onChange={e => set('tiktok_access_token', e.target.value)} placeholder="Votre access token TikTok" className="input" />
-          </Field>
-          <Field label="Confidentialité par défaut">
-            <select value={cfg.tiktok_default_privacy || 'PUBLIC_TO_EVERYONE'} onChange={e => set('tiktok_default_privacy', e.target.value)} className="input">
-              <option value="PUBLIC_TO_EVERYONE">Public</option>
-              <option value="FOLLOWER_OF_CREATOR">Abonnés seulement</option>
-              <option value="SELF_ONLY">Privé (moi)</option>
-            </select>
+          <div className="glass p-3 bg-pink-500/5 border-pink-500/20 -mt-1 mb-2">
+            <p className="text-white/50 text-xs">
+              Pas de clé API requise ! Exportez vos cookies TikTok depuis votre navigateur connecté
+              (extension <strong className="text-white">Cookie Editor</strong> → Export JSON) et collez-les ci-dessous.
+            </p>
+          </div>
+          <Field label="Cookies TikTok (JSON)" hint='Ex: [{"name":"sessionid","value":"...","domain":".tiktok.com",...}]'>
+            <textarea rows={3} value={cfg.tiktok_cookies || ''} onChange={e => set('tiktok_cookies', e.target.value)}
+              placeholder='[{"name":"sessionid","value":"..."}]'
+              className="input font-mono text-xs resize-none" />
           </Field>
         </Section>
 

@@ -379,31 +379,34 @@ async def run_tiktok_post(
     video_path: str,
     topic: str,
     custom_caption: Optional[str],
-    privacy: str,
+    privacy: str,   # kept for API compatibility, unused by cookie-based uploader
     user_config: dict,
     db=None,
 ) -> dict:
-    """Upload a video to TikTok using the TikTok Content Posting API."""
+    """Upload a video to TikTok via browser cookies (tiktok-uploader, no API key needed)."""
     def _sync_tiktok():
         _write_config(user_config)
         import config as mp_config
         mp_config.ROOT_DIR = str(ROOT_DIR_OVERRIDE)
 
-        access_token = user_config.get("tiktok_access_token", "")
-        if not access_token:
-            raise ValueError("TikTok access token requis. Configurez-le dans Paramètres.")
+        cookies = user_config.get("tiktok_cookies", "")
+        if not cookies:
+            raise ValueError(
+                "Cookies TikTok requis. Exportez-les depuis votre navigateur et configurez-les dans Paramètres → TikTok."
+            )
 
         from classes.TikTok import TikTok
-        _append_log(task_id, "Connexion à l'API TikTok...", db)
-        tiktok = TikTok(access_token=access_token, topic=topic)
+        _append_log(task_id, "Préparation de l'upload TikTok (cookies)...", db)
+        tiktok = TikTok(cookies=cookies, topic=topic)
 
         if not custom_caption:
             _append_log(task_id, "Génération de la légende par IA...", db)
         caption = custom_caption or tiktok.generate_caption()
-        _update_task(task_id, db, tweet_content=caption)  # reuse tweet_content field for caption
+        _update_task(task_id, db, tweet_content=caption)
 
+        headless = user_config.get("headless", True)
         _append_log(task_id, f"Upload vers TikTok ({os.path.basename(video_path)})...", db)
-        result = tiktok.post(video_path, custom_caption=caption, privacy=privacy)
+        result = tiktok.post(video_path, custom_caption=caption, headless=headless)
         return result
 
     try:
@@ -411,7 +414,7 @@ async def run_tiktok_post(
         loop = asyncio.get_event_loop()
         result = await loop.run_in_executor(None, _sync_tiktok)
         _update_task(task_id, db, status="completed",
-                     youtube_url=result.get("publish_id", ""),
+                     youtube_url=result.get("publish_id", result.get("status", "")),
                      completed_at=datetime.utcnow())
         _append_log(task_id, "✅ Vidéo publiée sur TikTok!", db)
         return result

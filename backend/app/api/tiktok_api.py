@@ -47,8 +47,8 @@ async def post_tiktok(
     db: Session = Depends(get_db),
 ):
     cfg = current_user.mp_config or {}
-    if not cfg.get("tiktok_access_token"):
-        raise HTTPException(400, "TikTok access token requis. Configurez-le dans Paramètres.")
+    if not cfg.get("tiktok_cookies"):
+        raise HTTPException(400, "Cookies TikTok requis. Configurez-les dans Paramètres → TikTok.")
 
     task = Task(
         owner_id=current_user.id,
@@ -91,8 +91,8 @@ async def post_from_youtube_task(
 ):
     """Republish an already-generated YouTube Short to TikTok."""
     cfg = current_user.mp_config or {}
-    if not cfg.get("tiktok_access_token"):
-        raise HTTPException(400, "TikTok access token requis. Configurez-le dans Paramètres.")
+    if not cfg.get("tiktok_cookies"):
+        raise HTTPException(400, "Cookies TikTok requis. Configurez-les dans Paramètres → TikTok.")
 
     yt_task = db.query(Task).filter(
         Task.id == youtube_task_id,
