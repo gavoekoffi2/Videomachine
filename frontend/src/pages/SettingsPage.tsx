@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useQuery } from '@tanstack/react-query'
-import { Settings, Save, RefreshCw, AlertCircle, CheckCircle, Brain, Globe, Mic2, Video, Mail, Music2 } from 'lucide-react'
+import { Settings, Save, RefreshCw, AlertCircle, CheckCircle, Brain, Globe, Mic2, Video, Mail, Music2, Share2 } from 'lucide-react'
 import { configApi } from '../lib/api'
 import toast from 'react-hot-toast'
 
@@ -204,6 +204,30 @@ export default function SettingsPage() {
           )}
           <Field label="Modèle Whisper" hint="tiny, base, small, medium, large">
             <input value={cfg.whisper_model || 'base'} onChange={e => set('whisper_model', e.target.value)} className="input" />
+          </Field>
+        </Section>
+
+        <Section title="Social Media (Facebook · Instagram · LinkedIn)" icon={Share2} color="from-blue-500 to-pink-500">
+          <div className="glass p-3 bg-blue-500/5 border-blue-500/20 -mt-1 mb-2">
+            <p className="text-white/50 text-xs">
+              Exportez vos cookies de navigateur au format JSON (extension <strong className="text-white">EditThisCookie</strong> ou similaire)
+              depuis un navigateur connecté à chaque plateforme, puis collez-les ci-dessous.
+            </p>
+          </div>
+          <Field label="Cookies Facebook (JSON)" hint='Ex: [{"name":"c_user","value":"...","domain":".facebook.com",...}]'>
+            <textarea rows={3} value={cfg.facebook_cookies || ''} onChange={e => set('facebook_cookies', e.target.value)}
+              placeholder='[{"name":"c_user","value":"..."}]'
+              className="input font-mono text-xs resize-none" />
+          </Field>
+          <Field label="Cookies Instagram (JSON)" hint="Même format — connecté à instagram.com">
+            <textarea rows={3} value={cfg.instagram_cookies || ''} onChange={e => set('instagram_cookies', e.target.value)}
+              placeholder='[{"name":"sessionid","value":"..."}]'
+              className="input font-mono text-xs resize-none" />
+          </Field>
+          <Field label="Cookies LinkedIn (JSON)" hint="Même format — connecté à linkedin.com">
+            <textarea rows={3} value={cfg.linkedin_cookies || ''} onChange={e => set('linkedin_cookies', e.target.value)}
+              placeholder='[{"name":"li_at","value":"..."}]'
+              className="input font-mono text-xs resize-none" />
           </Field>
         </Section>
 

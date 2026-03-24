@@ -72,6 +72,17 @@ export const tiktokApi = {
   status: (id: number) => api.get(`/tiktok/posts/${id}/status`),
 }
 
+export const socialApi = {
+  post: (video_path: string, topic: string, platforms?: string[], captions?: Record<string, string>) =>
+    api.post('/social/post', { video_path, topic, platforms, captions }),
+  postFromYouTube: (youtube_task_id: number, topic?: string, platforms?: string[]) =>
+    api.post(`/social/post-from-task/${youtube_task_id}`, null, {
+      params: { topic, platforms: platforms?.join(',') }
+    }),
+  posts: (skip=0, limit=50) => api.get('/social/posts', { params: { skip, limit } }),
+  status: (id: number) => api.get(`/social/posts/${id}/status`),
+}
+
 export const paymentsApi = {
   plans: () => api.get('/payments/plans'),
   initiate: (plan: string, currency='XOF') => api.post('/payments/initiate', { plan, currency }),

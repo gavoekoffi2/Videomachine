@@ -420,3 +420,84 @@ async def run_tiktok_post(
         _update_task(task_id, db, status="failed", error_message=str(e))
         _append_log(task_id, f"❌ Erreur: {e}", db)
         return {"error": str(e)}
+
+
+# ─── SOCIAL PUBLISHER (Facebook / Instagram / LinkedIn) ───────────────────────
+
+async def run_social_publish(
+    task_id: int,
+    video_path: str,
+    topic: str,
+    platforms: list,
+    captions: dict,
+    user_config: dict,
+    db=None,
+) -> dict:
+    """Publish a video to Facebook, Instagram and/or LinkedIn via Playwright cookies."""
+    def _sync_social():
+        _write_config(user_config)
+        import config as mp_config
+        mp_config.ROOT_DIR = str(ROOT_DIR_OVERRIDE)
+
+        # Build cookies dict from user config
+        platform_cookies = {}
+        for platform in platforms:
+            cookies_val = user_config.get(f"{platform}_cookies", "")
+            if cookies_val:
+                platform_cookies[platform] = cookies_val
+
+        if not platform_cookies:
+            raise ValueError("Aucun cookie configuré pour les plateformes demandées.")
+
+        from classes.SocialPublisher import SocialPublisher, PUBLISHERS
+        headless = user_config.get("headless", True)
+
+        results = {}
+        for platform in platforms:
+            if platform not in platform_cookies:
+                results[platform] = {"status": "skipped", "reason": "no cookies"}
+                continue
+            _append_log(task_id, f"Publication sur {platform}...", db)
+
+            # Generate caption via Ollama if not provided
+            caption = captions.get(platform, "")
+            if not caption:
+                try:
+                    publisher = SocialPublisher(platform_cookies={platform: platform_cookies[platform]}, headless=headless)
+                    caption = publisher.generate_caption(topic, platform)
+                except Exception:
+                    caption = f"#{topic.replace(' ', '')} #video"
+
+            try:
+                pub = PUBLISHERS[platform]()
+                result = pub.post(
+                    video_path=video_path,
+                    caption=caption,
+                    cookies_json=platform_cookies[platform],
+                    headless=headless,
+                )
+                results[platform] = result
+                _append_log(task_id, f"✅ {platform}: publié", db)
+            except Exception as e:
+                results[platform] = {"status": "failed", "error": str(e)}
+                _append_log(task_id, f"❌ {platform}: {e}", db)
+
+        return results
+
+    try:
+        _update_task(task_id, db, status="running")
+        loop = asyncio.get_event_loop()
+        results = await loop.run_in_executor(None, _sync_social)
+
+        # Store per-platform results as JSON in tweet_content field
+        _update_task(task_id, db,
+                     status="completed",
+                     tweet_content=json.dumps(results),
+                     completed_at=datetime.utcnow())
+        _append_log(task_id, "✅ Publication sociale terminée!", db)
+        return results
+    except Exception as e:
+        logger.exception(f"Social task {task_id} failed: {e}")
+        _update_task(task_id, db, status="failed", error_message=str(e))
+        _append_log(task_id, f"❌ Erreur: {e}", db)
+        return {"error": str(e)}

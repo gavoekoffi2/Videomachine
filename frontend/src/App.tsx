@@ -9,6 +9,7 @@ import YouTubePage from './pages/YouTubePage'
 import TwitterPage from './pages/TwitterPage'
 import AffiliatePage from './pages/AffiliatePage'
 import TikTokPage from './pages/TikTokPage'
+import SocialPage from './pages/SocialPage'
 import SettingsPage from './pages/SettingsPage'
 import PricingPage from './pages/PricingPage'
 import ProfilePage from './pages/ProfilePage'
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="twitter" element={<TwitterPage />} />
         <Route path="affiliate" element={<AffiliatePage />} />
         <Route path="tiktok" element={<TikTokPage />} />
+        <Route path="social" element={<SocialPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="pricing" element={<PricingPage isDashboard />} />
         <Route path="profile" element={<ProfilePage />} />

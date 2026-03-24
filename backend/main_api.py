@@ -15,7 +15,7 @@ load_dotenv()
 
 from app.core.config import settings
 from app.core.database import init_db
-from app.api import auth, config_api, youtube_api, twitter_api, afm_api, payments_api, tiktok_api
+from app.api import auth, config_api, youtube_api, twitter_api, afm_api, payments_api, tiktok_api, social_api
 
 logging.basicConfig(
     level=logging.INFO,
@@ -56,6 +56,7 @@ app.include_router(youtube_api.router)
 app.include_router(twitter_api.router)
 app.include_router(afm_api.router)
 app.include_router(tiktok_api.router)
+app.include_router(social_api.router)
 app.include_router(payments_api.router)
 
 os.makedirs("uploads", exist_ok=True)
