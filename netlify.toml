@@ -1,0 +1,40 @@
+# Netlify configuration for VideoMachine SaaS frontend
+# The React frontend is deployed here.
+# The FastAPI backend must run separately (VPS, Railway, Render, etc.)
+# and its URL is set via VITE_API_URL environment variable in Netlify UI.
+
+[build]
+  base    = "frontend"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# SPA fallback — serve index.html for all client-side routes
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200
+
+# Optional: proxy /api calls to the backend to avoid CORS issues.
+# Set BACKEND_URL in Netlify environment variables.
+# Uncomment the block below and remove the VITE_API_URL approach if you prefer.
+#
+# [[redirects]]
+#   from   = "/api/*"
+#   to     = ":BACKEND_URL/api/:splat"
+#   status = 200
+#   force  = true
+#
+# [[redirects]]
+#   from   = "/uploads/*"
+#   to     = ":BACKEND_URL/uploads/:splat"
+#   status = 200
+#   force  = true
+
+[context.production.environment]
+  NODE_ENV = "production"
+
+[context.deploy-preview.environment]
+  NODE_ENV = "development"

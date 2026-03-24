@@ -1,6 +1,12 @@
 import axios from 'axios'
 
-export const api = axios.create({ baseURL: '/api' })
+// In dev/Docker: relative '/api' (proxied by Vite or nginx).
+// In Netlify production: VITE_API_URL points to the backend VPS/server.
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api'
+
+export const api = axios.create({ baseURL: API_BASE })
 
 api.interceptors.request.use(cfg => {
   const token = localStorage.getItem('token')
@@ -53,6 +59,17 @@ export const afmApi = {
   run: (affiliate_link: string, twitter_topic: string) => api.post('/afm/run', { affiliate_link, twitter_topic }),
   tasks: () => api.get('/afm/tasks'),
   status: (id: number) => api.get(`/afm/tasks/${id}/status`),
+}
+
+export const tiktokApi = {
+  post: (video_path: string, topic: string, custom_caption?: string, privacy?: string) =>
+    api.post('/tiktok/post', { video_path, topic, custom_caption, privacy }),
+  postFromYouTube: (youtube_task_id: number, topic?: string, custom_caption?: string, privacy?: string) =>
+    api.post(`/tiktok/post-from-task/${youtube_task_id}`, null, {
+      params: { topic, custom_caption, privacy }
+    }),
+  posts: (skip=0, limit=50) => api.get('/tiktok/posts', { params: { skip, limit } }),
+  status: (id: number) => api.get(`/tiktok/posts/${id}/status`),
 }
 
 export const paymentsApi = {

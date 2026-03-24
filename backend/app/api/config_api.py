@@ -41,6 +41,9 @@ class MPConfig(BaseModel):
     zip_url: str = ""
     # YouTube
     is_for_kids: bool = False
+    # TikTok
+    tiktok_access_token: str = ""
+    tiktok_default_privacy: str = "PUBLIC_TO_EVERYONE"
     # Outreach/Email
     outreach_message_subject: str = "Hello"
     google_maps_scraper_niche: str = ""

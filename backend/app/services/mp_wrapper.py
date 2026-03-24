@@ -370,3 +370,53 @@ async def run_afm(task_id: int, affiliate_link: str, twitter_topic: str,
         _update_task(task_id, db, status="failed", error_message=str(e))
         _append_log(task_id, f"❌ Erreur: {e}", db)
         return {"error": str(e)}
+
+
+# ─── TIKTOK ───────────────────────────────────────────────────────────────────
+
+async def run_tiktok_post(
+    task_id: int,
+    video_path: str,
+    topic: str,
+    custom_caption: Optional[str],
+    privacy: str,
+    user_config: dict,
+    db=None,
+) -> dict:
+    """Upload a video to TikTok using the TikTok Content Posting API."""
+    def _sync_tiktok():
+        _write_config(user_config)
+        import config as mp_config
+        mp_config.ROOT_DIR = str(ROOT_DIR_OVERRIDE)
+
+        access_token = user_config.get("tiktok_access_token", "")
+        if not access_token:
+            raise ValueError("TikTok access token requis. Configurez-le dans Paramètres.")
+
+        from classes.TikTok import TikTok
+        _append_log(task_id, "Connexion à l'API TikTok...", db)
+        tiktok = TikTok(access_token=access_token, topic=topic)
+
+        if not custom_caption:
+            _append_log(task_id, "Génération de la légende par IA...", db)
+        caption = custom_caption or tiktok.generate_caption()
+        _update_task(task_id, db, tweet_content=caption)  # reuse tweet_content field for caption
+
+        _append_log(task_id, f"Upload vers TikTok ({os.path.basename(video_path)})...", db)
+        result = tiktok.post(video_path, custom_caption=caption, privacy=privacy)
+        return result
+
+    try:
+        _update_task(task_id, db, status="running")
+        loop = asyncio.get_event_loop()
+        result = await loop.run_in_executor(None, _sync_tiktok)
+        _update_task(task_id, db, status="completed",
+                     youtube_url=result.get("publish_id", ""),
+                     completed_at=datetime.utcnow())
+        _append_log(task_id, "✅ Vidéo publiée sur TikTok!", db)
+        return result
+    except Exception as e:
+        logger.exception(f"TikTok task {task_id} failed: {e}")
+        _update_task(task_id, db, status="failed", error_message=str(e))
+        _append_log(task_id, f"❌ Erreur: {e}", db)
+        return {"error": str(e)}

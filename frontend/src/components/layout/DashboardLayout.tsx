@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Video, Twitter, Link2, Settings, CreditCard, User, LogOut, Menu, X, Home, Zap, ChevronRight } from 'lucide-react'
+import { Video, Twitter, Link2, Settings, CreditCard, User, LogOut, Menu, X, Home, Zap, ChevronRight, Music2 } from 'lucide-react'
 import { useAuthStore } from '../../lib/store'
 
 const nav = [
   { to: '/dashboard', icon: Home, label: 'Dashboard', end: true },
   { to: '/dashboard/youtube', icon: Video, label: 'YouTube Shorts' },
+  { to: '/dashboard/tiktok', icon: Music2, label: 'TikTok' },
   { to: '/dashboard/twitter', icon: Twitter, label: 'Twitter Bot' },
   { to: '/dashboard/affiliate', icon: Link2, label: 'Affiliate Marketing' },
   { to: '/dashboard/settings', icon: Settings, label: 'Paramètres' },

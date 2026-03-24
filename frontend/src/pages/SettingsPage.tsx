@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useQuery } from '@tanstack/react-query'
-import { Settings, Save, RefreshCw, AlertCircle, CheckCircle, Brain, Globe, Mic2, Video, Mail } from 'lucide-react'
+import { Settings, Save, RefreshCw, AlertCircle, CheckCircle, Brain, Globe, Mic2, Video, Mail, Music2 } from 'lucide-react'
 import { configApi } from '../lib/api'
 import toast from 'react-hot-toast'
 
@@ -169,6 +169,19 @@ export default function SettingsPage() {
           </Field>
           <Field label="Threads (CPU)" hint="Nombre de threads pour MoviePy (défaut: 2)">
             <input type="number" min={1} max={16} value={cfg.threads || 2} onChange={e => set('threads', parseInt(e.target.value))} className="input" />
+          </Field>
+        </Section>
+
+        <Section title="TikTok" icon={Music2} color="from-pink-500 to-red-500">
+          <Field label="Access Token TikTok" hint="Obtenez-le via TikTok for Developers → votre app → scope video.publish">
+            <input type="password" value={cfg.tiktok_access_token || ''} onChange={e => set('tiktok_access_token', e.target.value)} placeholder="Votre access token TikTok" className="input" />
+          </Field>
+          <Field label="Confidentialité par défaut">
+            <select value={cfg.tiktok_default_privacy || 'PUBLIC_TO_EVERYONE'} onChange={e => set('tiktok_default_privacy', e.target.value)} className="input">
+              <option value="PUBLIC_TO_EVERYONE">Public</option>
+              <option value="FOLLOWER_OF_CREATOR">Abonnés seulement</option>
+              <option value="SELF_ONLY">Privé (moi)</option>
+            </select>
           </Field>
         </Section>
 
