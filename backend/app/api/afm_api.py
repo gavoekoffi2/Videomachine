@@ -4,7 +4,7 @@ Affiliate Marketing API — wraps MoneyPrinterV2 AFM class.
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 from app.core.database import get_db
 from app.core.security import get_active_user
@@ -33,7 +33,6 @@ class TaskOut(BaseModel):
     class Config:
         from_attributes = True
 
-from typing import Optional
 
 
 @router.post("/run", response_model=TaskOut)

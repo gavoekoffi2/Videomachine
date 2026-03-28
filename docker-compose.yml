@@ -10,20 +10,20 @@ services:
       - uploads_data:/app/uploads
       - songs_data:/app/Songs
       - mp_cache:/app/.mp
-      - ./backend/config.json:/app/config.json
     ports:
       - "8000:8000"
     restart: unless-stopped
-
-  frontend:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile.frontend
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.videomachine.rule=Host(`videomachine-api.finablasolution.cloud`)"
+      - "traefik.http.routers.videomachine.entrypoints=websecure"
+      - "traefik.http.routers.videomachine.tls=true"
+      - "traefik.http.routers.videomachine.tls.certresolver=letsencrypt"
+      - "traefik.http.services.videomachine.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.videomachine-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.videomachine-cors.headers.accesscontrolallowmethods=GET,POST,PUT,PATCH,DELETE,OPTIONS"
+      - "traefik.http.middlewares.videomachine-cors.headers.accesscontrolallowheaders=Content-Type,Authorization"
+      - "traefik.http.routers.videomachine.middlewares=videomachine-cors"
 
 volumes:
   uploads_data:
